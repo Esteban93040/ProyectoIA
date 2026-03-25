@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 const DEFAULT_API_URL = "http://127.0.0.1:8000";
+const SUPPORTED_ALGORITHMS = new Set(["astar", "bfs", "bcu"]);
 
 export function useAStar() {
   const apiUrl = useMemo(
@@ -29,12 +30,17 @@ export function useAStar() {
     }
   }, [apiUrl]);
 
-  const runAStar = useCallback(
-    async (start, goal) => {
+  const runSearch = useCallback(
+    async (algorithm, start, goal) => {
       setLoading(true);
       setError("");
       try {
-        const response = await fetch(`${apiUrl}/astar`, {
+        const normalizedAlgorithm = String(algorithm || "astar").toLowerCase();
+        const endpoint = SUPPORTED_ALGORITHMS.has(normalizedAlgorithm)
+          ? normalizedAlgorithm
+          : "astar";
+
+        const response = await fetch(`${apiUrl}/${endpoint}`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ start, goal }),
@@ -42,7 +48,7 @@ export function useAStar() {
 
         if (!response.ok) {
           const details = await response.json().catch(() => ({}));
-          throw new Error(details.detail || "Error ejecutando A*");
+          throw new Error(details.detail || "Error ejecutando busqueda");
         }
 
         const data = await response.json();
@@ -70,6 +76,6 @@ export function useAStar() {
     loading,
     error,
     fetchGraph,
-    runAStar,
+    runSearch,
   };
 }

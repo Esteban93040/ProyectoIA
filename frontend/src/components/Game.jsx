@@ -2,13 +2,20 @@ import { useEffect, useMemo, useState } from "react";
 import Scene from "./Scene";
 import { useAStar } from "../hooks/useAStar";
 
+const ALGORITHM_LABELS = {
+  astar: "A*",
+  bfs: "BFS",
+  bcu: "BCU",
+};
+
 function Game() {
-  const { graph, result, runAStar, loading, error } = useAStar();
+  const { graph, result, runSearch, loading, error } = useAStar();
 
   const cityList = useMemo(() => Object.keys(graph.cities || {}), [graph.cities]);
 
   const [start, setStart] = useState("");
   const [goal, setGoal] = useState("");
+  const [algorithm, setAlgorithm] = useState("astar");
   const [stepIndex, setStepIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [speedMs, setSpeedMs] = useState(700);
@@ -43,7 +50,7 @@ function Game() {
 
   const handleRun = async () => {
     if (!start || !goal) return;
-    const data = await runAStar(start, goal);
+    const data = await runSearch(algorithm, start, goal);
     if (data) {
       setStepIndex(0);
       setIsPlaying(true);
@@ -62,6 +69,19 @@ function Game() {
     <section className="game-layout">
       <aside className="hud-panel">
         <h2>Control de simulacion</h2>
+
+        <div className="field-row">
+          <label htmlFor="algorithm-select">Algoritmo</label>
+          <select
+            id="algorithm-select"
+            value={algorithm}
+            onChange={(event) => setAlgorithm(event.target.value)}
+          >
+            <option value="astar">A*</option>
+            <option value="bfs">BFS</option>
+            <option value="bcu">BCU</option>
+          </select>
+        </div>
 
         <div className="field-row">
           <label htmlFor="start-city">Inicio</label>
@@ -108,7 +128,7 @@ function Game() {
 
         <div className="button-row">
           <button type="button" onClick={handleRun} disabled={loading || !start || !goal}>
-            {loading ? "Calculando..." : "Iniciar A*"}
+            {loading ? "Calculando..." : `Iniciar ${ALGORITHM_LABELS[algorithm] || "Busqueda"}`}
           </button>
           <button
             type="button"
@@ -123,9 +143,11 @@ function Game() {
         </div>
 
         <div className="status-card">
+          <p>Algoritmo: {ALGORITHM_LABELS[algorithm] || "-"}</p>
           <p>Paso: {steps.length === 0 ? "-" : `${stepIndex + 1} / ${steps.length}`}</p>
           <p>Actual: {currentStep?.current || "-"}</p>
           <p>Costo final: {result?.cost ? result.cost.toFixed(2) : "-"}</p>
+          <p>Saltos (BFS): {result?.hops ?? "-"}</p>
           <p>Camino: {result?.path ? result.path.join(" -> ") : "-"}</p>
           {error ? <p className="error-text">{error}</p> : null}
         </div>
