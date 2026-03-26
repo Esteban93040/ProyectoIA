@@ -1,14 +1,14 @@
 :root {
   --bg-0: #0b1020;
   --bg-1: #131d35;
-  --panel: rgba(15, 24, 46, 0.82);
+  --panel: rgba(12, 20, 41, 0.82);
   --panel-border: rgba(143, 172, 217, 0.35);
   --text: #f4f6fb;
   --muted: #a8b1c7;
   --accent: #4d9de0;
   --danger: #e63946;
-  --success: #56c271;
-  --current: #f4d35e;
+  --success: #45c465;
+  --current: #f7d14a;
 }
 
 * {
