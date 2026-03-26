@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 const DEFAULT_API_URL = "http://127.0.0.1:8000";
-const SUPPORTED_ALGORITHMS = new Set(["astar", "bfs", "bcu"]);
+const SUPPORTED_ALGORITHMS = new Set(["astar", "bfs", "bcu", "dfs"]);
 
 export function useAStar() {
   const apiUrl = useMemo(

@@ -6,6 +6,7 @@ const ALGORITHM_LABELS = {
   astar: "A*",
   bfs: "BFS",
   bcu: "BCU",
+  dfs: "DFS",
 };
 
 function Game() {
@@ -80,6 +81,7 @@ function Game() {
             <option value="astar">A*</option>
             <option value="bfs">BFS</option>
             <option value="bcu">BCU</option>
+            <option value="dfs">DFS</option>
           </select>
         </div>
 

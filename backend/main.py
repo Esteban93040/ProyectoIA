@@ -5,6 +5,7 @@ from pydantic import BaseModel
 from AstarCopy import a_star_steps, get_graph_data
 from bcu import uniform_cost_search_steps
 from bfs import bfs_steps
+from dfs import dfs_steps
 
 
 class AStarRequest(BaseModel):
@@ -110,3 +111,30 @@ def run_bfs(payload: AStarRequest):
 @app.get("/bfs")
 def run_bfs_get(start: str, goal: str):
     return run_bfs(AStarRequest(start=start, goal=goal))
+
+
+@app.post("/dfs")
+def run_dfs(payload: AStarRequest):
+    graph = get_graph_data()
+    cities = graph["cities"]
+
+    if payload.start not in cities:
+        raise HTTPException(status_code=400, detail=f"Ciudad inicio invalida: {payload.start}")
+    if payload.goal not in cities:
+        raise HTTPException(status_code=400, detail=f"Ciudad destino invalida: {payload.goal}")
+
+    path, cost, steps = dfs_steps(payload.start, payload.goal)
+
+    if path is None:
+        raise HTTPException(status_code=404, detail="No se encontro camino entre las ciudades")
+
+    return {
+        "path": path,
+        "cost": cost,
+        "steps": steps,
+    }
+
+
+@app.get("/dfs")
+def run_dfs_get(start: str, goal: str):
+    return run_dfs(AStarRequest(start=start, goal=goal))
