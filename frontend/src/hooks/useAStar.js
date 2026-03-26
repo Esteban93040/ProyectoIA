@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-const DEFAULT_API_URL = "http://localhost:8000";
+const DEFAULT_API_URL = "https://proyectoia-dau4.onrender.com";
 const SUPPORTED_ALGORITHMS = new Set(["astar", "bfs", "bcu", "dfs"]);
 
 export function useAStar() {
